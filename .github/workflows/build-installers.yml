@@ -33,7 +33,11 @@ jobs:
           --add-data "设置说明.md;."
           --hidden-import download_asr
           --hidden-import download_model
-          --hidden-import download_sentence_model launcher.py
+          --hidden-import download_sentence_model
+          --collect-all funasr
+          --collect-all wtpsplit
+          --collect-all modelscope
+          launcher.py
       - uses: Minionguyjpro/Inno-Setup-Action@v1.2.5
         with:
           path: packaging/实时英日翻译.iss

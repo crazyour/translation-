@@ -1,12 +1,23 @@
 # -*- mode: python ; coding: utf-8 -*-
+from PyInstaller.utils.hooks import collect_all
+
+datas = [('system_audio_capture.m', '.'), ('设置说明.md', '.')]
+binaries = []
+hiddenimports = ['download_asr', 'download_model', 'download_sentence_model']
+tmp_ret = collect_all('funasr')
+datas += tmp_ret[0]; binaries += tmp_ret[1]; hiddenimports += tmp_ret[2]
+tmp_ret = collect_all('wtpsplit')
+datas += tmp_ret[0]; binaries += tmp_ret[1]; hiddenimports += tmp_ret[2]
+tmp_ret = collect_all('modelscope')
+datas += tmp_ret[0]; binaries += tmp_ret[1]; hiddenimports += tmp_ret[2]
 
 
 a = Analysis(
     ['launcher.py'],
     pathex=[],
-    binaries=[],
-    datas=[('system_audio_capture.m', '.'), ('设置说明.md', '.')],
-    hiddenimports=['download_asr', 'download_model', 'download_sentence_model'],
+    binaries=binaries,
+    datas=datas,
+    hiddenimports=hiddenimports,
     hookspath=[],
     hooksconfig={},
     runtime_hooks=[],
