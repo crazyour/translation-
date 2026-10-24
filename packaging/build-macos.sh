@@ -16,7 +16,8 @@ rm -rf "$HOME/Library/Application Support/pyinstaller"
   --hidden-import download_sentence_model \
   --collect-all funasr \
   --collect-all wtpsplit \
-  --collect-all modelscope \
+  --collect-submodules modelscope.hub \
+  --collect-data modelscope \
   launcher.py
 
 hdiutil create -volname "实时英日翻译" -srcfolder "dist/实时英日翻译.app" \
