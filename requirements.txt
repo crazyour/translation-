@@ -1,0 +1,12 @@
+torch>=2.6
+transformers>=4.40,<5
+sentencepiece>=0.2.0
+huggingface-hub>=0.27
+funasr>=1.1.5
+modelscope>=1.22
+kaldi-native-fbank>=1.21
+mlx-lm>=0.28; sys_platform == "darwin"
+onnxruntime>=1.16,<2
+sounddevice>=0.4.6
+numpy>=1.24
+wtpsplit>=2.2,<3

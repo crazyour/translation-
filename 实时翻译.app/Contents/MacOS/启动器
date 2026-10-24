@@ -1,0 +1,25 @@
+#!/bin/sh
+# 实时翻译 .app 启动器
+# 这个 .app 是包装式的：真正运行的是项目根目录 .venv/bin/python realtime.py。
+# 因此 .app 必须放在项目根目录里，且 .venv 已经初始化（运行过 ./run_realtime.sh）。
+
+set -eu
+
+# 自身在 实时翻译.app/Contents/MacOS/启动器，向上四级是项目根。
+SELF_DIR="$(cd "$(dirname "$0")" && pwd)"
+APP_BUNDLE="$(dirname "$(dirname "$SELF_DIR")")"
+PROJECT_ROOT="$(dirname "$APP_BUNDLE")"
+
+cd "$PROJECT_ROOT"
+
+VENV_PY="$PROJECT_ROOT/.venv/bin/python"
+
+if [ ! -x "$VENV_PY" ]; then
+	osascript <<EOF || true
+display alert "找不到 Python 环境" message "未检测到 $PROJECT_ROOT/.venv/bin/python。\n\n请先在项目目录运行：\n./run_realtime.sh\n\n来初始化依赖和模型。" as critical buttons {"好的"} default button "好的"
+EOF
+	exit 1
+fi
+
+# 透传所有参数给 realtime.py
+exec "$VENV_PY" "$PROJECT_ROOT/realtime.py" "$@"

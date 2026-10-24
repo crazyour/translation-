@@ -1,0 +1,43 @@
+name: Build installers
+
+on:
+  workflow_dispatch:
+  push:
+    tags: ["v*"]
+
+jobs:
+  macos:
+    runs-on: macos-14
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python -m pip install -r requirements.txt pyinstaller modelscope
+      - run: sh packaging/build-macos.sh
+      - uses: actions/upload-artifact@v4
+        with:
+          name: 实时英日翻译-macOS
+          path: dist/实时英日翻译-macOS.dmg
+
+  windows:
+    runs-on: windows-2022
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python -m pip install -r requirements.txt pyinstaller modelscope llama-cpp-python
+      - run: >-
+          python -m PyInstaller --noconfirm --clean --windowed --name "实时英日翻译"
+          --add-data "设置说明.md;."
+          --hidden-import download_asr
+          --hidden-import download_model
+          --hidden-import download_sentence_model launcher.py
+      - uses: Minionguyjpro/Inno-Setup-Action@v1.2.5
+        with:
+          path: packaging/实时英日翻译.iss
+      - uses: actions/upload-artifact@v4
+        with:
+          name: 实时英日翻译-Windows
+          path: dist/实时英日翻译-Windows-Setup.exe

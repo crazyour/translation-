@@ -1,0 +1,9 @@
+.venv/
+models/
+build/
+dist/
+__pycache__/
+.build/
+*.pyc
+.DS_Store
+:memory:.ses
