@@ -42,6 +42,7 @@ jobs:
       - uses: Minionguyjpro/Inno-Setup-Action@v1.2.5
         with:
           path: packaging/实时英日翻译.iss
+          options: /Q
       - uses: actions/upload-artifact@v4
         with:
           name: 实时英日翻译-Windows
