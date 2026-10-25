@@ -1,0 +1,9 @@
+# Linux-only additions for the Tk window and direct ALSA microphone access.
+services:
+  translator:
+    environment:
+      DISPLAY: ${DISPLAY}
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix:rw
+    devices:
+      - /dev/snd:/dev/snd

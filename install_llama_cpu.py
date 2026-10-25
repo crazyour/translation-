@@ -10,6 +10,24 @@ from pathlib import Path
 VERSION = "0.3.35"
 
 
+def _extract_source(archive: tarfile.TarFile, destination: Path) -> None:
+    """Safely extract on both Python 3.10/3.11 and Python 3.12+."""
+    try:
+        archive.extractall(destination, filter="data")
+        return
+    except TypeError:
+        # The filter argument was added in Python 3.12. Reject path traversal
+        # explicitly before using the older API.
+        root = destination.resolve()
+        for member in archive.getmembers():
+            target = (destination / member.name).resolve()
+            if target != root and root not in target.parents:
+                raise RuntimeError(
+                    f"源码压缩包包含不安全路径：{member.name}"
+                )
+        archive.extractall(destination)
+
+
 def main() -> None:
     with tempfile.TemporaryDirectory(prefix="llama-cpu-build-") as tmp:
         tmp_path = Path(tmp)
@@ -23,7 +41,7 @@ def main() -> None:
         )
         archive = next(tmp_path.glob("llama_cpp_python-*.tar.gz"))
         with tarfile.open(archive) as tar:
-            tar.extractall(tmp_path, filter="data")
+            _extract_source(tar, tmp_path)
         source = next(tmp_path.glob("llama_cpp_python-*/CMakeLists.txt"))
         cmake = source.read_text()
         cmake = cmake.replace(
@@ -37,7 +55,7 @@ def main() -> None:
         subprocess.run(
             [
                 sys.executable, "-m", "pip", "install", "--force-reinstall",
-                "--no-deps", "--no-cache-dir", str(source.parent),
+                "--no-cache-dir", str(source.parent),
             ],
             check=True,
         )

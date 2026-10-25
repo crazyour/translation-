@@ -1,0 +1,14 @@
+name: realtime-translator
+
+services:
+  translator:
+    build:
+      context: .
+    image: realtime-en-ja-translator:latest
+    stdin_open: true
+    tty: true
+    volumes:
+      - translator-models:/app/models
+
+volumes:
+  translator-models:

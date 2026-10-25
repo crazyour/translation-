@@ -25,8 +25,9 @@ from runtime_paths import DATA_DIR, MODELS_DIR, RESOURCE_DIR
 from translate import (
     FAST_GGUF_MODEL_PATH,
     FAST_MLX_MODEL_DIR,
+    GGUF_MODEL_PATH,
     MAX_OUTPUT_CHARS,
-    MODEL_DIR as NLLB_MODEL_DIR,
+    MODEL_DIR as QUALITY_MLX_MODEL_DIR,
     SOURCE_LANG,
     TARGET_LANG,
     choose_device,
@@ -578,7 +579,7 @@ def get_translation_path(model_kind: str, device: torch.device) -> Path:
     if model_kind == "fast":
         return FAST_MLX_MODEL_DIR if use_mlx else FAST_GGUF_MODEL_PATH
     if model_kind == "quality":
-        return NLLB_MODEL_DIR if use_mlx else FAST_GGUF_MODEL_PATH
+        return QUALITY_MLX_MODEL_DIR if use_mlx else GGUF_MODEL_PATH
     if model_kind == "nllb-600m":
         return NLLB_600M_MODEL_DIR
     if model_kind == "nllb-1.3b":

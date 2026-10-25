@@ -1,0 +1,14 @@
+.git
+.github
+.venv
+.build
+build
+dist
+models
+__pycache__
+*.py[cod]
+*.dmg
+*.app
+.DS_Store
+:memory:.ses
+.claude

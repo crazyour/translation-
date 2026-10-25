@@ -46,7 +46,7 @@ def _snapshot_ready(model_dir: Path) -> bool:
 
 def _translation_model_spec(cfg: dict) -> tuple[str, str, Path, Callable[[], bool]]:
     dev = cfg.get("device", "auto")
-    model_kind = cfg.get("translation_model", "fast")
+    model_kind = cfg.get("translation_model", "quality")
     use_mlx = (
         sys.platform == "darwin"
         and (
@@ -76,7 +76,7 @@ def _translation_model_spec(cfg: dict) -> tuple[str, str, Path, Callable[[], boo
 
 def _translation_download_backend(cfg: dict) -> str:
     dev = cfg.get("device", "auto")
-    model_kind = cfg.get("translation_model", "fast")
+    model_kind = cfg.get("translation_model", "quality")
     use_mlx = (
         sys.platform == "darwin"
         and (
@@ -225,18 +225,18 @@ def first_time_wizard(hw: dict) -> dict:
 
     print("-" * 60)
     print("请选择翻译模型（响应速度与翻译精度的平衡）：")
-    print("  [1] 极速推荐 (Qwen2.5 1.5B) - 极低延迟，低显存占用（直接回车）")
-    print("  [2] 高质量版 (Qwen3 4B)    - 语境理解更丰富，需要更多显存/算力")
+    print("  [1] 高质量版 (Qwen3 4B)    - 默认模型，语境理解更丰富（直接回车）")
+    print("  [2] 极速版 (Qwen2.5 1.5B)  - 更低延迟和内存占用")
     print("  [3] 经典翻译 (NLLB 600M)   - 专用神经翻译模型")
     
     m_choice = input("\n请输入选项编号 [默认 1]: ").strip()
     model_map = {
-        "1": "fast",
-        "": "fast",
-        "2": "quality",
+        "1": "quality",
+        "": "quality",
+        "2": "fast",
         "3": "nllb-600m",
     }
-    selected_model = model_map.get(m_choice, "fast")
+    selected_model = model_map.get(m_choice, "quality")
 
     cfg = {
         "device": selected_device,
@@ -338,10 +338,10 @@ def main():
     if not cfg and getattr(sys, "frozen", False) and "--setup" not in sys.argv:
         cfg = {
             "device": hw["recommended"],
-            "translation_model": "fast",
+            "translation_model": "quality",
         }
         save_config(cfg)
-        print("首次启动：已根据本机硬件选择推荐设备与快速翻译模型。", flush=True)
+        print("首次启动：已根据本机硬件选择推荐设备与 Qwen3 4B 翻译模型。", flush=True)
     elif not cfg or "--setup" in sys.argv:
         cfg = first_time_wizard(hw)
 
@@ -361,7 +361,7 @@ def main():
         sys.executable,
         str(ROOT / "realtime.py"),
         "--device", effective_cfg.get("device", "auto"),
-        "--translation-model", effective_cfg.get("translation_model", "fast"),
+        "--translation-model", effective_cfg.get("translation_model", "quality"),
     ]
 
     # 透传其他命令行参数（如 --capture-system-audio, --mic 等）
